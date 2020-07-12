@@ -16,6 +16,7 @@ import dev.raghav.fitnessbuddy.other.Constants.ACTION_START_OR_RESUME_SERVICE
 import dev.raghav.fitnessbuddy.other.Constants.MAP_ZOOM
 import dev.raghav.fitnessbuddy.other.Constants.POLYLINE_COLOR
 import dev.raghav.fitnessbuddy.other.Constants.POLYLINE_WIDTH
+import dev.raghav.fitnessbuddy.other.TrackingUtility
 import dev.raghav.fitnessbuddy.services.Polyline
 import dev.raghav.fitnessbuddy.services.Polylines
 import dev.raghav.fitnessbuddy.services.TrackingService
@@ -32,6 +33,9 @@ class TrackingFragment: Fragment(R.layout.fragment_tracking) {
     private var pathPoints = mutableListOf<Polyline>()
 
     private  var map: GoogleMap? = null
+
+    private var currentTimeInMillis = 0L
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mapView.onCreate(savedInstanceState)
@@ -112,6 +116,12 @@ class TrackingFragment: Fragment(R.layout.fragment_tracking) {
             pathPoints = it
             addLatestPolyline()
             moveCameraToUser()
+        })
+
+        TrackingService.timeRunInMillis.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            currentTimeInMillis = it
+            val formattedTime = TrackingUtility.getFormattedStopWatchTime(currentTimeInMillis,true)
+            tvTimer.text = formattedTime
         })
 
     }
